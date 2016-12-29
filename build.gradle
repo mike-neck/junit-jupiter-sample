@@ -50,6 +50,9 @@ tasks.withType(JavaCompile) {
 junitPlatform {
     filters {
         includeClassNamePattern '^.*$'
+        tags {
+            exclude 'two'
+        }
     }
 }
 
