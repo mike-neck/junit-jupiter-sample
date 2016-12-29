@@ -53,6 +53,13 @@ public class ShowingInformation {
     }
 
     @Test
+    @DisplayName("例外あり(無視)")
+    @ExtendWith({IgnoredExceptionHandler.class})
+    void ignoredException() throws IgnoredException {
+        throw new IgnoredException("この例外は無視");
+    }
+
+    @Test
     @Tag("tag for method")
     void tagged() {
     }
