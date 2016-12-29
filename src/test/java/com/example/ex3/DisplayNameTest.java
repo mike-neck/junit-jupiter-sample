@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Contract;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
@@ -48,5 +49,17 @@ public class DisplayNameTest {
     @DisplayName("doubleの値をチェックする")
     void checkingDouble() {
         assertEquals(65535/65536.0, asDouble(), 1/128.0);
+    }
+
+    @Test
+    @DisplayName("このテストでは以下の観点でテストを行う\n\n" +
+            "* 文字列が同じであること\n" +
+            "* 文字列の長さが同じであること\n")
+    void multipleLineDisplayName() {
+        String japan = "JAPAN";
+        assertAll(
+                () -> assertEquals("japan", japan.toLowerCase())
+                , () -> assertEquals(5, japan.length())
+        );
     }
 }
