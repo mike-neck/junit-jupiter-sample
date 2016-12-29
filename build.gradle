@@ -47,6 +47,12 @@ tasks.withType(JavaCompile) {
     it.options.encoding = 'UTF-8'
 }
 
+junitPlatform {
+    filters {
+        includeClassNamePattern '^.*$'
+    }
+}
+
 generateSchema {
     def zone  = ZoneId.of('Asia/Tokyo')
     def today = LocalDate.now(zone)
