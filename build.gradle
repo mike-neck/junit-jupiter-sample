@@ -1,0 +1,84 @@
+buildscript {
+    repositories {
+	    mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+	}
+    dependencies {
+        classpath "gradle.plugin.io.github.divinespear:jpa-schema-gradle-plugin:0.2.1"
+        classpath "$junit5Platform:$junit5PluginArtifact:$junit5PlatformVersion"
+    }
+}
+
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
+apply plugin: 'java'
+apply plugin: "io.github.divinespear.jpa-schema-generate"
+apply plugin: junit5Plugin
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly "$lombok:lombok:$lombokVersion"
+    compileOnly 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
+
+    testCompileOnly "$lombok:lombok:$lombokVersion"
+
+    testCompile "$slf4j:$slf4jApi:$slf4jVersion"
+    testCompile "$logback:$logbackClassic:$logbackVersion"
+
+    testCompile "$hibernate:$hibernateCore:$hibernateVersion"
+    testCompile "$hibernate:$hibernateManager:$hibernateVersion"
+    testRuntime "$h2db:h2:$h2Version"
+
+    testCompile "$junit5:$junit5Api:$junit5Version"
+    testRuntime "$junit5:$junit5Engine:$junit5Version"
+}
+
+tasks.withType(JavaCompile) {
+    it.targetCompatibility = '1.8'
+    it.sourceCompatibility = '1.8'
+    it.options.encoding = 'UTF-8'
+}
+
+generateSchema {
+    def zone  = ZoneId.of('Asia/Tokyo')
+    def today = LocalDate.now(zone)
+    def fmt   = DateTimeFormatter.ofPattern('uuuuMMdd')
+    def fileName = "V${today.format(fmt)}__create.sql"
+
+    vendor = 'hibernate'
+    packageToScan = ['com.example.entity']
+    scriptAction = 'create'
+
+    format = true
+
+    targets {
+        h2 {
+            createOutputFileName = fileName
+            outputDirectory = file("${project.buildDir}/ddl/h2")
+            databaseProductName = 'H2'
+            databaseMajorVersion = 1
+            databaseMinorVersion = 4
+            properties = [
+                    'hibernate.dialect': 'org.hibernate.dialect.H2Dialect'
+            ]
+        }
+
+        mysql {
+            createOutputFileName = fileName
+            outputDirectory = file("${project.buildDir}/ddl/mysql")
+            databaseProductName = 'MySQL'
+            databaseMajorVersion = 5
+            databaseMinorVersion = 6
+            properties = [
+                    "hibernate.dialect": 'org.hibernate.dialect.MySQL5InnoDBDialect'
+            ]
+        }
+    }
+}
