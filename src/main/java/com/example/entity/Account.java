@@ -19,50 +19,31 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.sql.Date;
-import java.time.LocalDate;
-import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "todo")
-public class Todo implements Serializable {
+@Table(name = "account")
+public class Account implements Serializable {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
+    @Column(unique = true, nullable = false, length = 127)
+    private String username;
 
     @Column(nullable = false)
-    private String description;
+    private String password;
 
     @Column(nullable = false, updatable = false)
     private Date created;
-
-    @ManyToOne(cascade = CascadeType.REMOVE, optional = false)
-    private Status status;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "history")
-    private List<TodoHistory> history;
-
-    public Todo(String title, String description) {
-        this.title = title;
-        this.description = description;
-        this.created = Date.valueOf(LocalDate.now());
-    }
 }
