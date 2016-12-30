@@ -30,6 +30,8 @@ dependencies {
 
     testCompileOnly "$lombok:lombok:$lombokVersion"
 
+    testCompile "$guice:guice:$guiceVersion"
+
     testCompile "$slf4j:$slf4jApi:$slf4jVersion"
     testCompile "$logback:$logbackClassic:$logbackVersion"
 
