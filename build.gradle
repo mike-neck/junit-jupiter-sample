@@ -27,7 +27,13 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    h2database
+}
+
 dependencies {
+    h2database  "$h2db:h2:$h2Version"
+
     compile     "$jetbrains:annotations:15.0"
     compileOnly "$lombok:lombok:$lombokVersion"
     compileOnly 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
@@ -44,7 +50,7 @@ dependencies {
 
     testCompile "$hibernate:$hibernateCore:$hibernateVersion"
     testCompile "$hibernate:$hibernateManager:$hibernateVersion"
-    testRuntime "$h2db:h2:$h2Version"
+    testCompile configurations.h2database
 
     testCompile "$junit5:$junit5Api:$junit5Version"
     testRuntime "$junit5:$junit5Engine:$junit5Version"
@@ -70,6 +76,8 @@ generateSchema {
     def today = LocalDate.now(zone)
     def fmt   = DateTimeFormatter.ofPattern('uuuuMMdd')
     def fileName = "V${today.format(fmt)}__create.sql"
+
+    def baseDir = file("${project.buildDir}/ddl")
 
     vendor = 'hibernate'
     packageToScan = ['com.example.entity']
@@ -100,6 +108,53 @@ generateSchema {
             ]
         }
     }
+
+    ['h2', 'mysql'].each {
+        project.tasks.generateSchema.outputs.files file("${baseDir}/$it/$fileName")
+    }
+}
+
+task('modifyDdl', dependsOn: 'generateSchema') {
+    File ddl = file("$buildDir/ddl/h2ddl.sql")
+    File h2ddl = tasks.generateSchema.outputs.files.find {
+        it.absolutePath.contains('h2')
+    }
+
+    outputs.files ddl
+    inputs.files h2ddl
+
+    doLast {
+        def objects = []
+        h2ddl.text.eachLine {
+            if (it.contains('create') && (it.contains('table') || it.contains('sequence'))) {
+                def obj = it.split()
+                objects << "${obj[1]} ${obj[2]}"
+            }
+        }
+        def drop = objects.collect {
+            "drop $it if exists;"
+        }.join('\n')
+        ddl.write("""\
+           |$drop
+           |
+           |${h2ddl.text}
+           |""".stripMargin(), 'UTF-8')
+    }
+}
+
+task('tmpDatabaseReflection', type: JavaExec, dependsOn: 'modifyDdl') {
+    def ddl = tasks.modifyDdl.outputs.files
+    classpath configurations.h2database.asFileTree
+    inputs.files ddl
+    main = 'org.h2.tools.RunScript'
+    args '-url',
+            'jdbc:h2:file:/Users/mike/IdeaProjects/sandbox/sample-projects/junit-jupiter-sample/tmp/data/data;DB_CLOSE_ON_EXIT=FALSE',
+            '-script',
+            ddl.first(),
+            '-user',
+            'dev',
+            '-password',
+            'dev'
 }
 
 project(':spring-boot') {
