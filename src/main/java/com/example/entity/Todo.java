@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.CascadeType;
@@ -38,6 +39,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 @Data
 @AllArgsConstructor
@@ -93,5 +95,30 @@ public class Todo implements Serializable
             add(new TodoHistory(self, reportedBy));
         }};
         this.reportedBy = reportedBy;
+    }
+
+    @Contract("null -> fail")
+    public void addHistory(
+            @NotNull TodoHistory h
+    ) {
+        Objects.requireNonNull(h);
+        history.add(h);
+    }
+
+    @NotNull
+    @Contract("null,_ -> fail; _,null -> fail")
+    public static Function<Todo, TodoHistory> changeTitle(
+            @NotNull String newTitle
+            , @NotNull Account changedBy
+    ) {
+        Objects.requireNonNull(newTitle);
+        Objects.requireNonNull(changedBy);
+
+        return t -> new TodoHistory(
+                t
+                , t.history.size()
+                , changedBy
+                , new TodoTitleChanged(t.title, newTitle)
+        );
     }
 }
