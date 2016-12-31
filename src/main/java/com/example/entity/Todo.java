@@ -15,6 +15,7 @@
  */
 package com.example.entity;
 
+import com.example.entity.listener.EventTable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -38,7 +40,8 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "todo")
-public class Todo implements Serializable {
+public class Todo implements Serializable
+        , EventTable {
 
     @Id
     @GeneratedValue
@@ -60,9 +63,20 @@ public class Todo implements Serializable {
     @JoinColumn(name = "history")
     private List<TodoHistory> history;
 
-    public Todo(String title, String description) {
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "reported_by", referencedColumnName = "id", nullable = false, updatable = false)
+    private Account reportedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "assign_to", referencedColumnName = "id")
+    private Account assignTo;
+
+    public Todo(String title, String description, Account reportedBy) {
         this.title = title;
         this.description = description;
         this.created = Date.valueOf(LocalDate.now());
+        this.history = new ArrayList<>();
+        this.history.add(new TodoHistory(this, reportedBy));
+        this.reportedBy = reportedBy;
     }
 }

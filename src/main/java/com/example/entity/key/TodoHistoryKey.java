@@ -38,5 +38,5 @@ public class TodoHistoryKey implements Serializable {
     private Todo todo;
 
     @Column(nullable = false, updatable = false)
-    private Integer history;
+    private Integer serial;
 }

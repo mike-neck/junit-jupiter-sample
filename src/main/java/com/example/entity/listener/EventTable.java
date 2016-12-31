@@ -13,19 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.repository;
+package com.example.entity.listener;
 
-import com.example.entity.Todo;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.sql.Date;
 
-import java.util.Optional;
+public interface EventTable {
 
-public interface TodoRepository {
-
-    @Nullable Todo save(@NotNull Todo todo);
-
-    void delete(@NotNull Todo todo);
-
-    @NotNull Optional<Todo> findById(@NotNull Long id);
+    void setCreated(Date created);
 }

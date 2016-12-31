@@ -28,6 +28,8 @@ dependencies {
     compileOnly "$lombok:lombok:$lombokVersion"
     compileOnly 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
 
+    compile     "$di:$di:1"
+
     testCompileOnly "$lombok:lombok:$lombokVersion"
 
     testCompile "$guice:guice:$guiceVersion"

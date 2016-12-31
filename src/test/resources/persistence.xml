@@ -10,7 +10,6 @@
         <class>com.example.entity.Todo</class>
         <class>com.example.entity.TodoHistory</class>
         <class>com.example.entity.key.TodoHistoryKey</class>
-        <class>com.example.repository.TodoRepository</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>

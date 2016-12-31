@@ -15,40 +15,25 @@
  */
 package com.example.entity;
 
-import com.example.entity.listener.EventTable;
-import com.example.entity.listener.EventTableListener;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import java.io.Serializable;
-import java.sql.Date;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Table(name = "account")
-@EntityListeners({EventTableListener.class})
-public class Account implements Serializable
-        , EventTable {
+public abstract class TodoChange implements Serializable {
 
     @Id
     @GeneratedValue
-    private Long id;
+    protected Long id;
 
-    @Column(unique = true, nullable = false, length = 127)
-    private String username;
-
-    @Column(nullable = false)
-    private String password;
-
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, updatable = false)
-    private Date created;
+    protected TodoChangeType type;
 }
