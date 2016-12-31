@@ -35,7 +35,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.sql.Date;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -88,7 +88,10 @@ public class Todo implements Serializable
 
         this.title = title;
         this.description = description;
-        this.history = Collections.singletonList(new TodoHistory(this, reportedBy));
+        final Todo self = this;
+        this.history = new ArrayList<TodoHistory>() {{
+            add(new TodoHistory(self, reportedBy));
+        }};
         this.reportedBy = reportedBy;
     }
 }
