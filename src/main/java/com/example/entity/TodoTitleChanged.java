@@ -36,22 +36,15 @@ public class TodoTitleChanged extends TodoChange {
     @Column(nullable = false, updatable = false)
     private String newTitle;
 
-    TodoTitleChanged(
+    public TodoTitleChanged(
             @NotNull String oldTitle
             , @NotNull String newTitle
-            , @NotNull TodoChangeType type) {
+    ) {
         Objects.requireNonNull(oldTitle);
         Objects.requireNonNull(newTitle);
 
         this.oldTitle = oldTitle;
         this.newTitle = newTitle;
-        this.type = type;
-    }
-
-    @NotNull
-    public static TodoTitleChanged newInstance(@NotNull String oldTitle, @NotNull String newTitle) {
-        Objects.requireNonNull(oldTitle);
-        Objects.requireNonNull(newTitle);
-        return new TodoTitleChanged(oldTitle, newTitle, TodoChangeType.TITLE_CHANGED);
+        this.type = TodoChangeType.TITLE_CHANGED;
     }
 }
