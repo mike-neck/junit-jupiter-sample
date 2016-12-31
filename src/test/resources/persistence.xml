@@ -8,8 +8,14 @@
         <class>com.example.entity.Status</class>
         <class>com.example.entity.StatusClass</class>
         <class>com.example.entity.Todo</class>
+        <class>com.example.entity.TodoChange</class>
+        <class>com.example.entity.TodoChangeType</class>
+        <class>com.example.entity.TodoCreated</class>
+        <class>com.example.entity.TodoDescriptionChanged</class>
         <class>com.example.entity.TodoHistory</class>
+        <class>com.example.entity.TodoTitleChanged</class>
         <class>com.example.entity.key.TodoHistoryKey</class>
+        <class>com.example.entity.listener.EventTableListener</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
@@ -28,8 +34,14 @@
         <class>com.example.entity.Status</class>
         <class>com.example.entity.StatusClass</class>
         <class>com.example.entity.Todo</class>
+        <class>com.example.entity.TodoChange</class>
+        <class>com.example.entity.TodoChangeType</class>
+        <class>com.example.entity.TodoCreated</class>
+        <class>com.example.entity.TodoDescriptionChanged</class>
         <class>com.example.entity.TodoHistory</class>
+        <class>com.example.entity.TodoTitleChanged</class>
         <class>com.example.entity.key.TodoHistoryKey</class>
+        <class>com.example.entity.listener.EventTableListener</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
