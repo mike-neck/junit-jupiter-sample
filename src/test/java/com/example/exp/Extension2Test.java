@@ -18,6 +18,7 @@ package com.example.exp;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -38,4 +39,9 @@ public class Extension2Test {
     @Test void test1() {}
 
     @Test void test2() {}
+
+    @Nested
+    class Inner {
+        @Test void ext2InnerTest() {}
+    }
 }
