@@ -31,12 +31,12 @@ import java.util.Objects;
 @Entity
 public class TodoStatusChanged extends TodoChange {
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "old_status", referencedColumnName = "id", nullable = false, updatable = false)
+    @ManyToOne
+    @JoinColumn(name = "old_status", referencedColumnName = "id")
     private Status oldStatus;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "new_status", referencedColumnName = "id", nullable = false, updatable = false)
+    @ManyToOne
+    @JoinColumn(name = "new_status", referencedColumnName = "id")
     private Status newStatus;
 
     public TodoStatusChanged(

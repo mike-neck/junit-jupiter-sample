@@ -30,10 +30,10 @@ import java.util.Objects;
 @Entity
 public class TodoDescriptionChanged extends TodoChange {
 
-    @Column(nullable = false, updatable = false)
+    @Column
     private String oldDescription;
 
-    @Column(nullable = false, updatable = false)
+    @Column
     private String newDescription;
 
     public TodoDescriptionChanged(

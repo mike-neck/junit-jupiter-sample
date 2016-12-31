@@ -31,12 +31,12 @@ import java.util.Objects;
 @Entity
 public class TodoAssigneeChanged extends TodoChange {
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "old_assignee", referencedColumnName = "id", nullable = false, updatable = false)
+    @ManyToOne
+    @JoinColumn(name = "old_assignee", referencedColumnName = "id")
     private Account oldAssignee;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "new_assignee", referencedColumnName = "id", nullable = false, updatable = false)
+    @ManyToOne
+    @JoinColumn(name = "new_assignee", referencedColumnName = "id")
     private Account newAssignee;
 
     public TodoAssigneeChanged(
