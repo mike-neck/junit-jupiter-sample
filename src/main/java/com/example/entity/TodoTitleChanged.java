@@ -15,5 +15,43 @@
  */
 package com.example.entity;
 
-public class TodoTitleChanged {
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import java.util.Objects;
+
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Entity
+public class TodoTitleChanged extends TodoChange {
+
+    @Column(nullable = false, updatable = false)
+    private String oldTitle;
+
+    @Column(nullable = false, updatable = false)
+    private String newTitle;
+
+    TodoTitleChanged(
+            @NotNull String oldTitle
+            , @NotNull String newTitle
+            , @NotNull TodoChangeType type) {
+        Objects.requireNonNull(oldTitle);
+        Objects.requireNonNull(newTitle);
+
+        this.oldTitle = oldTitle;
+        this.newTitle = newTitle;
+        this.type = type;
+    }
+
+    @NotNull
+    public static TodoTitleChanged newInstance(@NotNull String oldTitle, @NotNull String newTitle) {
+        Objects.requireNonNull(oldTitle);
+        Objects.requireNonNull(newTitle);
+        return new TodoTitleChanged(oldTitle, newTitle, TodoChangeType.TITLE_CHANGED);
+    }
 }

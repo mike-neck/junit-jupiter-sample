@@ -15,9 +15,11 @@
  */
 package com.example.entity.listener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.Date;
 
 public interface EventTable {
 
-    void setCreated(Date created);
+    void setCreated(@NotNull Date created);
 }

@@ -16,13 +16,17 @@
 package com.example.entity;
 
 import com.example.entity.listener.EventTable;
+import com.example.entity.listener.EventTableListener;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -31,15 +35,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.sql.Date;
-import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "todo")
+@EntityListeners({EventTableListener.class})
 public class Todo implements Serializable
         , EventTable {
 
@@ -54,6 +59,7 @@ public class Todo implements Serializable
     private String description;
 
     @Column(nullable = false, updatable = false)
+    @Setter(onParam = @__({@NotNull}))
     private Date created;
 
     @ManyToOne(cascade = CascadeType.REMOVE, optional = false)
@@ -71,12 +77,18 @@ public class Todo implements Serializable
     @JoinColumn(name = "assign_to", referencedColumnName = "id")
     private Account assignTo;
 
-    public Todo(String title, String description, Account reportedBy) {
+    public Todo(
+            @NotNull String title
+            , @NotNull String description
+            , @NotNull Account reportedBy
+    ) {
+        Objects.requireNonNull(title);
+        Objects.requireNonNull(description);
+        Objects.requireNonNull(reportedBy);
+
         this.title = title;
         this.description = description;
-        this.created = Date.valueOf(LocalDate.now());
-        this.history = new ArrayList<>();
-        this.history.add(new TodoHistory(this, reportedBy));
+        this.history = Collections.singletonList(new TodoHistory(this, reportedBy));
         this.reportedBy = reportedBy;
     }
 }

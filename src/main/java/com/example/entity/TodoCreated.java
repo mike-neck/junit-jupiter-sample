@@ -18,6 +18,7 @@ package com.example.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.Entity;
 
@@ -27,6 +28,7 @@ import javax.persistence.Entity;
 @Entity
 public class TodoCreated extends TodoChange {
 
+    @NotNull
     public static TodoCreated newInstance() {
         final TodoCreated instance = new TodoCreated();
         instance.setType(TodoChangeType.CREATED);

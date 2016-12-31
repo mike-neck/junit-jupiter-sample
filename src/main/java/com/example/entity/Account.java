@@ -20,6 +20,8 @@ import com.example.entity.listener.EventTableListener;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,5 +52,6 @@ public class Account implements Serializable
     private String password;
 
     @Column(nullable = false, updatable = false)
+    @Setter(onParam = @__({@NotNull}))
     private Date created;
 }

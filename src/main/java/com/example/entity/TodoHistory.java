@@ -19,26 +19,31 @@ package com.example.entity;
 
 import com.example.entity.key.TodoHistoryKey;
 import com.example.entity.listener.EventTable;
+import com.example.entity.listener.EventTableListener;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "todo_history")
+@EntityListeners({EventTableListener.class})
 public class TodoHistory implements Serializable
         , EventTable {
 
@@ -55,20 +60,36 @@ public class TodoHistory implements Serializable
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     private TodoChange detail;
 
-    public TodoHistory(Todo todo, Account changedBy) {
+    public TodoHistory(
+            @NotNull Todo todo
+            , @NotNull Account changedBy
+    ) {
+        Objects.requireNonNull(todo);
+        Objects.requireNonNull(changedBy);
+
         this.key = new TodoHistoryKey(todo, 1);
         this.changedBy = changedBy;
         this.detail = TodoCreated.newInstance();
     }
 
-    public TodoHistory(Todo todo, int serial, Account changedBy, TodoChange detail) {
+    public TodoHistory(
+            @NotNull Todo todo
+            , int serial
+            , @NotNull Account changedBy
+            , @NotNull TodoChange detail
+    ) {
+        Objects.requireNonNull(todo);
+        Objects.requireNonNull(changedBy);
+        Objects.requireNonNull(detail);
+
         this.key = new TodoHistoryKey(todo, serial);
         this.changedBy = changedBy;
         this.detail = detail;
     }
 
     @Override
-    public void setCreated(Date created) {
+    public void setCreated(@NotNull Date created) {
+        Objects.requireNonNull(created);
         setChanged(created);
     }
 }
