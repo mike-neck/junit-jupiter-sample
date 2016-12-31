@@ -19,6 +19,7 @@ import com.example.entity.Account;
 import com.example.entity.Todo;
 import com.example.util.Pair;
 import com.google.inject.persist.Transactional;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
@@ -26,6 +27,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class TodoService {
 
@@ -67,10 +69,37 @@ public class TodoService {
         return opt.map(Pair.createPair(Todo.changeTitle(newTitle, changedBy)))
                 .map(Pair.consumePair(Todo::addHistory))
                 .map(em::merge)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format(
-                                "Todo cannot be found in the system. [id : %d]"
-                                , todo.getId())));
+                .orElseThrow(entityNotFound(todo));
     }
 
+    @NotNull
+    @Contract("null,_,_ -> fail;_,null,_ -> fail;_,_,null -> fail")
+    @Transactional
+    public Todo descriptionChange(
+            @NotNull Todo todo
+            , @NotNull String newDescription
+            , @NotNull Account changedBy
+    ) {
+        Objects.requireNonNull(todo);
+        Objects.requireNonNull(newDescription);
+        Objects.requireNonNull(changedBy);
+
+        return findTodoById(todo.getId())
+                .map(Pair.createPair(Todo.changeDescription(newDescription, changedBy)))
+                .map(Pair.consumePair(Todo::addHistory))
+                .map(em::merge)
+                .orElseThrow(entityNotFound(todo));
+    }
+
+    @NotNull
+    @Contract("null -> fail")
+    private static Supplier<EntityNotFoundException> entityNotFound(
+            @NotNull Todo todo
+    ) {
+        Objects.requireNonNull(todo);
+
+        return () -> new EntityNotFoundException(
+                String.format("Todo cannot be found in the system. [id : %d]", todo.getId())
+        );
+    }
 }

@@ -121,4 +121,21 @@ public class Todo implements Serializable
                 , new TodoTitleChanged(t.title, newTitle)
         );
     }
+
+    @NotNull
+    @Contract("null,_ -> fail; _,null -> fail")
+    public static Function<Todo, TodoHistory> changeDescription(
+            @NotNull String newDescription
+            , @NotNull Account changedBy
+    ) {
+        Objects.requireNonNull(newDescription);
+        Objects.requireNonNull(changedBy);
+
+        return t -> new TodoHistory(
+                t
+                , t.history.size()
+                , changedBy
+                , new TodoDescriptionChanged(t.description, newDescription)
+        );
+    }
 }
