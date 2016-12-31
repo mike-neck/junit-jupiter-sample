@@ -67,7 +67,7 @@ public class TodoHistory implements Serializable
         Objects.requireNonNull(todo);
         Objects.requireNonNull(changedBy);
 
-        this.key = new TodoHistoryKey(todo, 1);
+        this.key = new TodoHistoryKey(todo, 0);
         this.changedBy = changedBy;
         this.detail = TodoCreated.newInstance();
     }
