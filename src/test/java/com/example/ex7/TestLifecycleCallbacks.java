@@ -23,12 +23,20 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ContainerExtensionContext;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestExtensionContext;
+import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 
 @Slf4j
 public class TestLifecycleCallbacks implements
-        BeforeAllCallback, BeforeEachCallback, BeforeTestExecutionCallback,
-        AfterTestExecutionCallback, AfterEachCallback, AfterAllCallback {
+        BeforeAllCallback
+        , BeforeEachCallback
+        , BeforeTestExecutionCallback
+        , AfterTestExecutionCallback
+        , AfterEachCallback
+        , AfterAllCallback
+        , TestInstancePostProcessor
+{
 
     @Override
     public void beforeAll(ContainerExtensionContext context) throws Exception {
@@ -63,6 +71,12 @@ public class TestLifecycleCallbacks implements
     @Override
     public void afterAll(ContainerExtensionContext context) throws Exception {
         log.info("=== afterAll ===");
+        Thread.sleep(5);
+    }
+
+    @Override
+    public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
+        log.info("=== postProcessTestInstance ===");
         Thread.sleep(5);
     }
 }
