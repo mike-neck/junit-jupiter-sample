@@ -16,6 +16,7 @@
 package com.example.ex7;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
@@ -38,6 +39,17 @@ public class TestLifecycleCallbacks implements
         , TestInstancePostProcessor
 {
 
+    @NotNull
+    static String getTestInstanceHash(@NotNull TestExtensionContext context) {
+        final Object obj = context.getTestInstance();
+        return getHash(obj);
+    }
+
+    @NotNull
+    static String getHash(Object obj) {
+        return Integer.toHexString(obj.hashCode());
+    }
+
     @Override
     public void beforeAll(ContainerExtensionContext context) throws Exception {
         log.info("=== beforeAll ===");
@@ -46,25 +58,26 @@ public class TestLifecycleCallbacks implements
 
     @Override
     public void beforeEach(TestExtensionContext context) throws Exception {
-        log.info("=== beforeEach ===");
+        final String hash = getTestInstanceHash(context);
+        log.info("=== beforeEach[{}] ===", hash);
         Thread.sleep(5);
     }
 
     @Override
     public void beforeTestExecution(TestExtensionContext context) throws Exception {
-        log.info("=== beforeTestExecution ===");
+        log.info("=== beforeTestExecution[{}] ===", getTestInstanceHash(context));
         Thread.sleep(5);
     }
 
     @Override
     public void afterTestExecution(TestExtensionContext context) throws Exception {
-        log.info("=== afterTestExecution ===");
+        log.info("=== afterTestExecution[{}] ===", getTestInstanceHash(context));
         Thread.sleep(5);
     }
 
     @Override
     public void afterEach(TestExtensionContext context) throws Exception {
-        log.info("=== afterEach ===");
+        log.info("=== afterEach[{}] ===", getTestInstanceHash(context));
         Thread.sleep(5);
     }
 
@@ -76,7 +89,7 @@ public class TestLifecycleCallbacks implements
 
     @Override
     public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
-        log.info("=== postProcessTestInstance ===");
+        log.info("=== postProcessTestInstance[{}] ===", getHash(testInstance));
         Thread.sleep(5);
     }
 }

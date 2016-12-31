@@ -41,13 +41,13 @@ public class NestedClasses {
 
     @BeforeEach
     void beforeEach() throws InterruptedException {
-        log.info("beforeEach");
+        log.info("beforeEach[{}]", TestLifecycleCallbacks.getHash(this));
         Thread.sleep(20);
     }
 
     @AfterEach
     void afterEach() throws InterruptedException {
-        log.info("afterEach");
+        log.info("afterEach[{}]", TestLifecycleCallbacks.getHash(this));
         Thread.sleep(20);
     }
 
@@ -59,13 +59,13 @@ public class NestedClasses {
 
     @Test
     void aTest() throws InterruptedException {
-        log.info("aTest");
+        log.info("aTest[{}]", TestLifecycleCallbacks.getHash(this));
         Thread.sleep(20);
     }
 
     @Test
     void anotherTest() throws InterruptedException {
-        log.info("anotherTest");
+        log.info("anotherTest[{}]", TestLifecycleCallbacks.getHash(this));
         Thread.sleep(20);
     }
 
@@ -73,19 +73,19 @@ public class NestedClasses {
     class Inner {
         @BeforeEach
         void innerBeforeEach() throws InterruptedException {
-            INNER.info("innerBeforeEach");
+            INNER.info("innerBeforeEach[{}]", TestLifecycleCallbacks.getHash(this));
             Thread.sleep(20);
         }
 
         @Test
         void innerTest() throws InterruptedException {
-            INNER.info("innerTest");
+            INNER.info("innerTest[{}]", TestLifecycleCallbacks.getHash(this));
             Thread.sleep(20);
         }
 
         @AfterEach
         void innerAfterEach() throws InterruptedException {
-            INNER.info("innerAfterEach");
+            INNER.info("innerAfterEach[{}]", TestLifecycleCallbacks.getHash(this));
             Thread.sleep(20);
         }
 
@@ -93,19 +93,19 @@ public class NestedClasses {
         class MostInner {
             @BeforeEach
             void mostInnerBeforeEach() throws InterruptedException {
-                MOST.info("mostInnerBeforeEach");
+                MOST.info("mostInnerBeforeEach[{}]", TestLifecycleCallbacks.getHash(this));
                 Thread.sleep(20);
             }
 
             @Test
             void mostInnerTest() throws InterruptedException {
-                MOST.info("mostInnerTest");
+                MOST.info("mostInnerTest[{}]", TestLifecycleCallbacks.getHash(this));
                 Thread.sleep(20);
             }
 
             @AfterEach
             void mostInnerAfterEach() throws InterruptedException {
-                MOST.info("mostInnerAfterEach");
+                MOST.info("mostInnerAfterEach[{}]", TestLifecycleCallbacks.getHash(this));
                 Thread.sleep(20);
             }
         }
