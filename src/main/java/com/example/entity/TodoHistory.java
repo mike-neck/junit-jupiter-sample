@@ -58,7 +58,7 @@ public class TodoHistory implements Serializable
     public TodoHistory(Todo todo, Account changedBy) {
         this.key = new TodoHistoryKey(todo, 1);
         this.changedBy = changedBy;
-        this.detail = new TodoCreated();
+        this.detail = TodoCreated.newInstance();
     }
 
     public TodoHistory(Todo todo, int serial, Account changedBy, TodoChange detail) {

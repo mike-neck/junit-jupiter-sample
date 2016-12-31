@@ -15,7 +15,6 @@
  */
 package com.example.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -23,10 +22,14 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class TodoCreated extends TodoChange {
 
+    public static TodoCreated newInstance() {
+        final TodoCreated instance = new TodoCreated();
+        instance.setType(TodoChangeType.CREATED);
+        return instance;
+    }
 }
