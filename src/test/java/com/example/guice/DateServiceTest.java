@@ -20,9 +20,12 @@ import com.example.guice.annotation.Lang;
 import com.example.guice.annotation.Time;
 import com.example.guice.annotation.Zone;
 import com.example.guice.api.DateService;
+import com.example.util.Pair;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.inject.Inject;
@@ -31,6 +34,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import static java.time.ZoneId.of;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -38,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 @DisplayName("DateServiceのテスト - 実装はDateServiceImpl")
 public class DateServiceTest {
@@ -65,11 +70,27 @@ public class DateServiceTest {
             assertEquals(2, now.split(":")[0].length());
         }
 
-        @Test
-        @DisplayName("1月はJan")
-        void januaryIsJan(DateService service) {
-            final String date = service.date(2017, 1, 1);
-            assertEquals("Jan", date.substring(0, 3));
+        @TestFactory
+        @DisplayName("月の名前")
+        Stream<DynamicTest> monthName(DateService service) {
+            return Stream.of(
+                    new Pair<>("Jan", 1)
+                    , new Pair<>("Feb", 2)
+                    , new Pair<>("Mar", 3)
+                    , new Pair<>("Apr", 4)
+                    , new Pair<>("May", 5)
+                    , new Pair<>("Jun", 6)
+                    , new Pair<>("Jul", 7)
+                    , new Pair<>("Aug", 8)
+                    , new Pair<>("Sep", 9)
+                    , new Pair<>("Oct", 10)
+                    , new Pair<>("Nov", 11)
+                    , new Pair<>("Dec", 12)
+            ).map(Pair.mapPair(m -> service.date(2017, m, 1)))
+                    .map(Pair.mapPair(d -> d.substring(0, 3)))
+                    .map(Pair.transformPair((e, a) -> dynamicTest(
+                            String.format("test of %s", e)
+                            , () -> assertEquals(e, a))));
         }
 
         @Test
