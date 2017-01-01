@@ -50,6 +50,13 @@ tasks.withType(JavaCompile) {
 }
 
 junitPlatform {
+    selectors {
+//        method 'com.example.ex1.SimpleTest#firstTest'
+//        methods 'com.example.ex2.SecondTest#assertVariation', 'com.example.ex2.ThirdTest#assertionForCollections'
+//        aPackage 'com.example.ex2'
+//        aPackage 'com.example.ex1'
+        aPackage 'com.example'
+    }
     filters {
         includeClassNamePattern '^.*$'
         tags {
