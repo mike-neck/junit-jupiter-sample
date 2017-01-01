@@ -33,6 +33,11 @@ public final class Pair<L, R> {
     private final R right;
 
     @NotNull
+    public Pair<R, L> reverse() {
+        return new Pair<R, L>(right, left);
+    }
+
+    @NotNull
     @Contract("null -> fail")
     public <S> Pair<L, S> map(
             @NotNull Function<? super R, ? extends S> f
