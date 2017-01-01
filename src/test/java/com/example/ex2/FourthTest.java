@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -40,11 +39,9 @@ public class FourthTest {
         );
     }
 
-    private static final IntUnaryOperator SUCC = i -> i + 1;
-
     @Test
     void assertAllThatFails() {
-        Stream<Executable> tests = IntStream.iterate(1, SUCC).limit(7)
+        Stream<Executable> tests = IntStream.rangeClosed(1, 7)
                 .mapToObj(i -> () -> {
                     log.info("This is assertion[{}]", i);
                     assertEquals(i, i + (i % 3 == 0? 1 : 0), () -> "assertion" + i);

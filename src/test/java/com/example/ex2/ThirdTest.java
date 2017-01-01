@@ -55,8 +55,8 @@ public class ThirdTest {
     }
 
     private static List<Identity> identityList() {
-        return IntStream.iterate(0, i -> i + 1).limit(4).
-                mapToObj(Identity::new)
+        return IntStream.range(0, 4)
+                .mapToObj(Identity::new)
                 .collect(toList());
     }
 
