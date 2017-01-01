@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.function.Executable;
@@ -61,6 +62,7 @@ public class DynamicTestSample {
     }
 
     @TestFactory
+    @Tag("sample")
     Iterable<DynamicTest> dynamicTestIterable() {
         return Arrays.asList(
                 dynamicTest("1 + 2 = 3", () -> assertEquals(3, 1 + 2))
@@ -69,6 +71,7 @@ public class DynamicTestSample {
     }
 
     @TestFactory
+    @Tag("sample")
     Stream<DynamicTest> dynamicTestStream() {
         return Stream.of(
                 new ThreeInts(1, 2, 3)

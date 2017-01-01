@@ -49,11 +49,45 @@ tasks.withType(JavaCompile) {
     it.options.encoding = 'UTF-8'
 }
 
+class Cmd {
+    final String cmd
+    final String arg
+    Cmd(String cmd, String arg) {
+        this.cmd = cmd
+        this.arg = arg
+    }
+    Cmd(String line) {
+        this(line.split()[0], line.split()[1])
+    }
+}
+
 junitPlatform {
+    List<Cmd> tests = []
+    if (file('runtest').exists()) {
+        file('runtest').text.eachLine { tests << new Cmd(it) }
+    }
+    selectors {
+        tests.each {
+            if (it.cmd == 'm') {
+                method it.arg
+            } else if (it.cmd == 'c') {
+                aClass it.arg
+            } else if (it.cmd == 'p') {
+                aPackage it.arg
+            }
+        }
+    }
     filters {
         includeClassNamePattern '^.*$'
         tags {
             exclude 'two'
+            tests.each {
+                if (it.cmd == 'tag-e') {
+                    exclude it.arg
+                } else if (it.cmd == 'tag-i') {
+                    include it.arg
+                }
+            }
         }
     }
 }
