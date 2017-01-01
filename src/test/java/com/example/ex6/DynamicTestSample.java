@@ -88,7 +88,8 @@ public class DynamicTestSample {
         }
 
         String getTitle() {
-            return "(" + left + ") + (" + right + ") = " + result;
+            final String c = right < 0 ? "%d - %d = %d" : "%d + %d = %d";
+            return String.format(c, left, Math.abs(right), result);
         }
 
         Executable getTest() {
