@@ -29,14 +29,14 @@ public class TaggedTests {
     @Tag("one")
     @DisplayName("1st というタグを付けたテスト(タグはIDEで実行する上では特に意味がない)")
     void test1st() {
-        log.info("one");
+        log.info("1st");
     }
 
     @Test
     @Tag("two")
     @DisplayName("two という タグ")
     void test2nd() {
-        log.info("two");
+        log.info("2nd");
     }
 
     @Test
@@ -47,9 +47,7 @@ public class TaggedTests {
     })
     @DisplayName("Tagsでタグたくさん")
     void test3rd() {
-        log.info("one");
-        log.info("two");
-        log.info("three");
+        log.info("3rd");
     }
 
     @Test
@@ -58,9 +56,7 @@ public class TaggedTests {
     @Tag("this is four")
     @DisplayName("Tagsの中にではなく、Tagをたくさん")
     void test4th() {
-        log.info("one");
-        log.info("three");
-        log.info("this is four");
+        log.info("4th");
     }
 
     @Test
@@ -69,8 +65,6 @@ public class TaggedTests {
     @Tag("this is five")
     @DisplayName("Tagsの中にではなく、Tagをたくさん")
     void test5th() {
-        log.info("two");
-        log.info("three");
-        log.info("this is five");
+        log.info("5th");
     }
 }
