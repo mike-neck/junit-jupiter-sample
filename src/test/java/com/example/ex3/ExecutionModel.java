@@ -30,43 +30,36 @@ public class ExecutionModel {
     @BeforeAll
     static void beforeAll() throws InterruptedException {
         log.info("beforeAll");
-        //Thread.sleep(20);
     }
 
     @AfterAll
     static void afterAll() throws InterruptedException {
         log.info("afterAll");
-        //Thread.sleep(20);
     }
 
     @BeforeEach
     void beforeEach() throws InterruptedException {
         log.info("beforeEach");
-        //Thread.sleep(20);
     }
 
     @AfterEach
     void afterEach() throws InterruptedException {
         log.info("afterEach");
-        //Thread.sleep(20);
     }
 
     @Test
     void testFirst() throws InterruptedException {
         log.info("testFirst");
         fail("testFirst");
-        //Thread.sleep(20);
     }
 
     @Test
     void testSecond() throws InterruptedException {
         log.info("testSecond");
-        //Thread.sleep(20);
     }
 
     @Test
     void testThird() throws InterruptedException {
         log.info("testThird");
-        //Thread.sleep(20);
     }
 }
