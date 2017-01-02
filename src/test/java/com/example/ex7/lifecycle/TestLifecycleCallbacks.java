@@ -35,7 +35,9 @@ import org.junit.jupiter.api.extension.TestExecutionCondition;
 import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
 import org.junit.jupiter.api.extension.TestExtensionContext;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
+import org.slf4j.Logger;
 
+import java.lang.reflect.Method;
 import java.util.Objects;
 
 @Slf4j
@@ -53,6 +55,19 @@ public class TestLifecycleCallbacks implements
         , TestExecutionExceptionHandler
 {
 
+    static Logger getLog() {
+        return log;
+    }
+
+    @NotNull
+    @Contract("null->fail")
+    static String formatName(
+            @NotNull String name
+    ) {
+        Objects.requireNonNull(name);
+        return String.format("%-30s", name);
+    }
+
     @NotNull
     private static String getTestInstanceHash(@NotNull TestExtensionContext context) {
         final Object obj = context.getTestInstance();
@@ -66,72 +81,79 @@ public class TestLifecycleCallbacks implements
 
     @Override
     public void beforeAll(ContainerExtensionContext context) throws Exception {
-        log.info("=== beforeAll ===");
+        log.info("[{}]{}", getHash(this), formatName("beforeAll"));
         Thread.sleep(5);
     }
 
     @Override
     public void beforeEach(TestExtensionContext context) throws Exception {
         final String hash = getTestInstanceHash(context);
-        log.info("=== beforeEach[{}] ===", hash);
+        log.info("[{}]{}[{}]", getHash(this), formatName("beforeEach"), hash);
         Thread.sleep(5);
     }
 
     @Override
     public void beforeTestExecution(TestExtensionContext context) throws Exception {
-        log.info("=== beforeTestExecution[{}] ===", getTestInstanceHash(context));
+        log.info("[{}]{}[{}]", getHash(this), formatName("beforeTestExecution"), getTestInstanceHash(context));
         Thread.sleep(5);
     }
 
     @Override
     public void afterTestExecution(TestExtensionContext context) throws Exception {
-        log.info("=== afterTestExecution[{}] ===", getTestInstanceHash(context));
+        log.info("[{}]{}[{}]", getHash(this), formatName("afterTestExecution"), getTestInstanceHash(context));
         Thread.sleep(5);
     }
 
     @Override
     public void afterEach(TestExtensionContext context) throws Exception {
-        log.info("=== afterEach[{}] ===", getTestInstanceHash(context));
+        log.info("[{}]{}[{}]", getHash(this), formatName("afterEach"),getTestInstanceHash(context));
         Thread.sleep(5);
     }
 
     @Override
     public void afterAll(ContainerExtensionContext context) throws Exception {
-        log.info("=== afterAll ===");
+        log.info("[{}]{}", getHash(this), formatName("afterAll"));
         Thread.sleep(5);
     }
 
     @Override
     public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
-        log.info("=== postProcessTestInstance[{}] ===", getHash(testInstance));
+        log.info("[{}]{}[{}]", getHash(this), formatName("postProcessTestInstance"), getHash(testInstance));
         Thread.sleep(5);
     }
 
     @Override
     public ConditionEvaluationResult evaluate(ContainerExtensionContext context) {
-        log.info("=== evaluate container condition ===");
+        log.info("[{}]{}", getHash(this), formatName("evaluate container condition"));
         return ConditionEvaluationResult.enabled("No problem.");
     }
 
     @Override
     public ConditionEvaluationResult evaluate(TestExtensionContext context) {
-        log.info("=== evaluate test condition [{}] ===", getHash(context.getTestInstance()));
+        log.info("[{}]{}[{}]", getHash(this), formatName("evaluate test condition"), getHash(context.getTestInstance()));
         return ConditionEvaluationResult.enabled("No problem");
     }
 
     @Override
     public boolean supports(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         final String hash = getHashOfInstanceFromParameterContext(parameterContext);
-        log.info("=== supports[{}] ===", hash);
+        log.info("[{}]{}[{}]", getHash(this), formatName("supports"), hash);
         final Class<?> type = parameterContext.getParameter().getType();
-        return int.class.equals(type) | Integer.class.equals(type) | Integer.TYPE.equals(type);
+        return int.class.equals(type) | Integer.class.equals(type) | Integer.TYPE.equals(type) | String.class.equals(type);
     }
 
     @Override
     public Object resolve(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         final String hash = getHashOfInstanceFromParameterContext(parameterContext);
-        log.info("=== resolve[{}] ===", hash);
-        return 0;
+        log.info("[{}]{}[{}]", getHash(this), formatName("resolve"), hash);
+        final Class<?> type = parameterContext.getParameter().getType();
+        if (String.class.equals(type)) {
+            //noinspection OptionalGetWithoutIsPresent
+            final Method method = extensionContext.getTestMethod().get();
+            return formatName(method.getName());
+        } else {
+            return 0;
+        }
     }
 
     @NotNull
@@ -147,9 +169,8 @@ public class TestLifecycleCallbacks implements
 
     @Override
     public void handleTestExecutionException(TestExtensionContext context, Throwable throwable) throws Throwable {
-        if (throwable instanceof IgnorableException) {
-            log.info("=== handleTestExecutionException[{}] ===", getHash(context.getTestInstance()));
-        } else {
+        log.info("[{}]{}[{}]", getHash(this), formatName("handleTestExecutionException"), getHash(context.getTestInstance()));
+        if (throwable instanceof IgnorableException == false) {
             throw Objects.requireNonNull(throwable);
         }
     }

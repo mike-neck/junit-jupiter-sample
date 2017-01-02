@@ -15,7 +15,6 @@
  */
 package com.example.ex7.lifecycle;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,55 +22,57 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-@Slf4j
+import static com.example.ex7.lifecycle.TestLifecycleCallbacks.formatName;
+import static com.example.ex7.lifecycle.TestLifecycleCallbacks.getHash;
+import static com.example.ex7.lifecycle.TestLifecycleCallbacks.getLog;
+
 @ExtendWith({TestLifecycleCallbacks.class})
 public class NestedClasses {
 
-    private static final Logger INNER = LoggerFactory.getLogger("com.example.ex7.lifecycle.NestedClasses$Inner");
-    private static final Logger MOST = LoggerFactory.getLogger("com.example.ex7.lifecycle.NestedClasses$Inner$MostInner");
+    public NestedClasses() {
+        getLog().info("          {}[{}]", formatName("NestedClasses"), getHash(this));
+    }
 
     @BeforeAll
     static void beforeAll() throws InterruptedException {
-        log.info("beforeAll");
+        getLog().info("          {}", formatName("beforeAll"));
         Thread.sleep(20);
     }
 
     @BeforeEach
     void beforeEach() throws InterruptedException {
-        log.info("beforeEach[{}]", TestLifecycleCallbacks.getHash(this));
+        getLog().info("          {}[{}]", formatName("beforeEach"), getHash(this));
         Thread.sleep(20);
     }
 
     @AfterEach
     void afterEach() throws InterruptedException {
-        log.info("afterEach[{}]", TestLifecycleCallbacks.getHash(this));
+        getLog().info("          {}[{}]", formatName("afterEach"), getHash(this));
         Thread.sleep(20);
     }
 
     @AfterAll
     static void afterAll() throws InterruptedException {
-        log.info("afterAll");
+        getLog().info("          {}", formatName("afterAll"));
         Thread.sleep(20);
     }
 
     @Test
-    void aTest(@SuppressWarnings("unused") int param) throws InterruptedException {
-        log.info("aTest[{}]", TestLifecycleCallbacks.getHash(this));
+    void aTest(String method, @SuppressWarnings("unused") int param) throws InterruptedException {
+        getLog().info("          {}[{}]", method, getHash(this));
         Thread.sleep(20);
     }
 
     @Test
-    void anotherTest(@SuppressWarnings("unused") int param) throws InterruptedException {
-        log.info("anotherTest[{}]", TestLifecycleCallbacks.getHash(this));
+    void anotherTest(String method) throws InterruptedException {
+        getLog().info("          {}[{}]", method, getHash(this));
         Thread.sleep(20);
     }
 
     @Test
-    void throwingTest(@SuppressWarnings("unused")int param) throws IgnorableException {
-        log.info("throwingTest[{}]", TestLifecycleCallbacks.getHash(this));
+    void throwingTest() throws IgnorableException {
+        getLog().info("          {}[{}]", formatName("throwingTest"), getHash(this));
         try {
             Thread.sleep(20);
             throw new IgnorableException();
@@ -82,41 +83,49 @@ public class NestedClasses {
 
     @Nested
     class Inner {
+        Inner() {
+            getLog().info("          {}[{}]", formatName("Inner"), getHash(this));
+        }
+
         @BeforeEach
         void innerBeforeEach() throws InterruptedException {
-            INNER.info("innerBeforeEach[{}]", TestLifecycleCallbacks.getHash(this));
+            getLog().info("          {}[{}]", formatName("innerBeforeEach"), getHash(this));
             Thread.sleep(20);
         }
 
         @Test
-        void innerTest(@SuppressWarnings("unused") int param) throws InterruptedException {
-            INNER.info("innerTest[{}]", TestLifecycleCallbacks.getHash(this));
+        void innerTest(String method, @SuppressWarnings("unused") int param) throws InterruptedException {
+            getLog().info("          {}[{}]", method, getHash(this));
             Thread.sleep(20);
         }
 
         @AfterEach
         void innerAfterEach() throws InterruptedException {
-            INNER.info("innerAfterEach[{}]", TestLifecycleCallbacks.getHash(this));
+            getLog().info("          {}[{}]", formatName("innerAfterEach"), getHash(this));
             Thread.sleep(20);
         }
 
         @Nested
         class MostInner {
+            MostInner() {
+                getLog().info("          {}[{}]", formatName("MostInner"), getHash(this));
+            }
+
             @BeforeEach
             void mostInnerBeforeEach() throws InterruptedException {
-                MOST.info("mostInnerBeforeEach[{}]", TestLifecycleCallbacks.getHash(this));
+                getLog().info("          {}[{}]", formatName("mostInnerBeforeEach"), getHash(this));
                 Thread.sleep(20);
             }
 
             @Test
-            void mostInnerTest(@SuppressWarnings("unused") int param) throws InterruptedException {
-                MOST.info("mostInnerTest[{}]", TestLifecycleCallbacks.getHash(this));
+            void mostInnerTest(String method, @SuppressWarnings("unused") int param) throws InterruptedException {
+                getLog().info("          {}[{}]", method, getHash(this));
                 Thread.sleep(20);
             }
 
             @AfterEach
             void mostInnerAfterEach() throws InterruptedException {
-                MOST.info("mostInnerAfterEach[{}]", TestLifecycleCallbacks.getHash(this));
+                getLog().info("          {}[{}]", formatName("mostInnerAfterEach"), getHash(this));
                 Thread.sleep(20);
             }
         }
