@@ -15,7 +15,7 @@
  */
 package com.example.ex7.condition;
 
-import com.example.ex7.condition.filter.DayOfWeekTestFilter;
+import com.example.ex7.condition.filter.DayOfWeekFilter;
 import com.example.ex7.condition.filter.RunOn;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +32,7 @@ import static java.time.DayOfWeek.WEDNESDAY;
 
 @Slf4j
 @DisplayName("曜日によって実行されるテストが異なる")
-@ExtendWith({ DayOfWeekTestFilter.class })
+@ExtendWith({ DayOfWeekFilter.class })
 public class RunOnDayOfWeekCondition {
 
     @Test

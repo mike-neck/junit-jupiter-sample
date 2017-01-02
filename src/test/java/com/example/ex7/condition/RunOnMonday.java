@@ -15,7 +15,7 @@
  */
 package com.example.ex7.condition;
 
-import com.example.ex7.condition.filter.DayOfWeekContainerFilter;
+import com.example.ex7.condition.filter.DayOfWeekFilter;
 import com.example.ex7.condition.filter.RunOn;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.time.DayOfWeek;
 
 @Slf4j
-@ExtendWith({ DayOfWeekContainerFilter.class })
+@ExtendWith({ DayOfWeekFilter.class })
 @RunOn(dayOfWeek = DayOfWeek.MONDAY, zoneId = "Asia/Tokyo")
 @DisplayName("月曜のみ起動される")
 @Tag("filter")

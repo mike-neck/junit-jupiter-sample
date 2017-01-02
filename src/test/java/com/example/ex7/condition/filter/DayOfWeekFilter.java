@@ -19,7 +19,11 @@ import com.example.util.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
+import org.junit.jupiter.api.extension.ContainerExecutionCondition;
+import org.junit.jupiter.api.extension.ContainerExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestExecutionCondition;
+import org.junit.jupiter.api.extension.TestExtensionContext;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -33,9 +37,23 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.joining;
 
-final class DayOfWeekFilter {
+public final class DayOfWeekFilter implements 
+        ContainerExecutionCondition
+        , TestExecutionCondition
+{
 
     private static final Function<DayOfWeek, String> displayDayOfWeek = d -> d.getDisplayName(TextStyle.SHORT, Locale.getDefault());
+
+
+    @Override
+    public ConditionEvaluationResult evaluate(ContainerExtensionContext context) {
+        return evalDayOfWeek(context);
+    }
+
+    @Override
+    public ConditionEvaluationResult evaluate(TestExtensionContext context) {
+        return evalDayOfWeek(context);
+    }
 
     @NotNull
     @Contract("null -> fail")
