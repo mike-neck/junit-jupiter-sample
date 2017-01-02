@@ -13,17 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.ex7;
+package com.example.ex7.exception;
 
-import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
-import org.junit.jupiter.api.extension.TestExtensionContext;
+public class IgnoredException extends Exception {
 
-public class IgnoredExceptionHandler implements TestExecutionExceptionHandler {
-
-    @Override
-    public void handleTestExecutionException(TestExtensionContext context, Throwable e) throws Throwable {
-        if (e != null && (e instanceof IgnoredException) == false) {
-            throw e;
-        }
+    public IgnoredException(String message) {
+        super(message);
     }
 }

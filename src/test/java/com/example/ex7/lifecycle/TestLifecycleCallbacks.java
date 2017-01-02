@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.ex7;
+package com.example.ex7.lifecycle;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,7 @@ public class TestLifecycleCallbacks implements
 {
 
     @NotNull
-    static String getTestInstanceHash(@NotNull TestExtensionContext context) {
+    private static String getTestInstanceHash(@NotNull TestExtensionContext context) {
         final Object obj = context.getTestInstance();
         return getHash(obj);
     }

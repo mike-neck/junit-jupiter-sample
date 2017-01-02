@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.ex7;
+package com.example.ex7.info.context;
 
+import com.example.ex7.exception.IgnoredException;
+import com.example.ex7.exception.IgnoredExceptionHandler;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;

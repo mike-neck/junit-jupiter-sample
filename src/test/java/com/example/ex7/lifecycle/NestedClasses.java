@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.ex7;
+package com.example.ex7.lifecycle;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
 @ExtendWith({TestLifecycleCallbacks.class})
 public class NestedClasses {
 
-    static final Logger INNER = LoggerFactory.getLogger("com.example.ex7.NestedClasses$Inner");
-    static final Logger MOST = LoggerFactory.getLogger("com.example.ex7.NestedClasses$Inner$MostInner");
+    private static final Logger INNER = LoggerFactory.getLogger("com.example.ex7.lifecycle.NestedClasses$Inner");
+    private static final Logger MOST = LoggerFactory.getLogger("com.example.ex7.lifecycle.NestedClasses$Inner$MostInner");
 
     @BeforeAll
     static void beforeAll() throws InterruptedException {
