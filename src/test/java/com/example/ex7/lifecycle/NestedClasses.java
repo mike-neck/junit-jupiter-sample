@@ -69,6 +69,17 @@ public class NestedClasses {
         Thread.sleep(20);
     }
 
+    @Test
+    void throwingTest(@SuppressWarnings("unused")int param) throws IgnorableException {
+        log.info("throwingTest[{}]", TestLifecycleCallbacks.getHash(this));
+        try {
+            Thread.sleep(20);
+            throw new IgnorableException();
+        } catch (InterruptedException e) {
+            throw new IgnorableException(e);
+        }
+    }
+
     @Nested
     class Inner {
         @BeforeEach

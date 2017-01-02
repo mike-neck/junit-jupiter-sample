@@ -32,6 +32,7 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.jupiter.api.extension.TestExecutionCondition;
+import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
 import org.junit.jupiter.api.extension.TestExtensionContext;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 
@@ -49,6 +50,7 @@ public class TestLifecycleCallbacks implements
         , ContainerExecutionCondition
         , TestExecutionCondition
         , ParameterResolver
+        , TestExecutionExceptionHandler
 {
 
     @NotNull
@@ -141,5 +143,14 @@ public class TestLifecycleCallbacks implements
         return ctx.getTarget()
                 .map(TestLifecycleCallbacks::getHash)
                 .orElse("<empty>");
+    }
+
+    @Override
+    public void handleTestExecutionException(TestExtensionContext context, Throwable throwable) throws Throwable {
+        if (throwable instanceof IgnorableException) {
+            log.info("=== handleTestExecutionException[{}] ===", getHash(context.getTestInstance()));
+        } else {
+            throw Objects.requireNonNull(throwable);
+        }
     }
 }
