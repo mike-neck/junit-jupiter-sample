@@ -17,12 +17,9 @@ package com.example.ex7;
 
 import com.example.ex7.filter.RunOn;
 import com.example.util.Pair;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
-import org.junit.jupiter.api.extension.ContainerExecutionCondition;
-import org.junit.jupiter.api.extension.ContainerExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.time.DayOfWeek;
@@ -32,23 +29,29 @@ import java.time.format.TextStyle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.joining;
 
-@Slf4j
-public class DayOfWeekFilter implements ContainerExecutionCondition {
+public abstract class AbstractDayOfWeekFilter {
 
     private static final Function<DayOfWeek, String> displayDayOfWeek = d -> d.getDisplayName(TextStyle.SHORT, Locale.getDefault());
 
-    @Override
-    public ConditionEvaluationResult evaluate(ContainerExtensionContext context) {
+    @NotNull
+    @Contract("null -> fail")
+    protected final ConditionEvaluationResult evalDayOfWeek(
+            @NotNull ExtensionContext context
+    ) {
+        Objects.requireNonNull(context);
+
         final Pair<List<DayOfWeek>, DayOfWeek> pair = context.getElement()
                 .map(a -> a.getAnnotation(RunOn.class))
                 .map(r -> new Pair<>(Arrays.asList(r.dayOfWeek()), ZoneId.of(r.zoneId())))
                 .orElse(new Pair<>(Arrays.asList(DayOfWeek.values()), ZoneId.of("UTC")))
                 .map(LocalDate::now)
                 .map(LocalDate::getDayOfWeek);
+
         if (pair.getLeft().contains(pair.getRight())) {
             return ConditionEvaluationResult.enabled(reason(context, pair));
         } else {

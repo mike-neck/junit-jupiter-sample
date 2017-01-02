@@ -31,7 +31,7 @@ import static java.time.DayOfWeek.WEDNESDAY;
 
 @Slf4j
 @DisplayName("平日のみ起動される")
-@ExtendWith({ DayOfWeekFilter.class })
+@ExtendWith({ DayOfWeekContainerFilter.class })
 @RunOn(
         zoneId = "Asia/Tokyo"
         , dayOfWeek = {

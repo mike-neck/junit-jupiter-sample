@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.ex7.filter;
+package com.example.ex7;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.time.DayOfWeek;
+import com.example.ex7.filter.RunOn;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.MONDAY;
@@ -29,22 +29,35 @@ import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({
-        ElementType.TYPE
-        , ElementType.METHOD
-})
-public @interface RunOn {
+@Slf4j
+@DisplayName("曜日によって実行されるテストが異なる")
+@ExtendWith({ DayOfWeekTestFilter.class })
+public class RunOnDayOfWeekCondition {
 
-    DayOfWeek[] dayOfWeek() default {
+    @Test
+    @DisplayName("平日に実行される")
+    @RunOn(
+            zoneId = "Asia/Tokyo"
+            , dayOfWeek = {
             MONDAY
             , TUESDAY
             , WEDNESDAY
             , THURSDAY
             , FRIDAY
-            , SATURDAY
-            , SUNDAY
-    };
+    })
+    void runOnWeekday() {
+        log.info("runOnWeekday");
+    }
 
-    String zoneId() default "UTC";
+    @Test
+    @DisplayName("週末に実行される")
+    @RunOn(
+            zoneId = "Asia/Tokyo"
+            , dayOfWeek = {
+            SATURDAY
+            , SUNDAY
+    })
+    void runOnWeekend() {
+        log.info("runOnWeekend");
+    }
 }

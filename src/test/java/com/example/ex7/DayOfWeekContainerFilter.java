@@ -15,24 +15,18 @@
  */
 package com.example.ex7;
 
-import com.example.ex7.filter.RunOn;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import java.time.DayOfWeek;
+import org.junit.jupiter.api.extension.ConditionEvaluationResult;
+import org.junit.jupiter.api.extension.ContainerExecutionCondition;
+import org.junit.jupiter.api.extension.ContainerExtensionContext;
 
 @Slf4j
-@ExtendWith({ DayOfWeekContainerFilter.class })
-@RunOn(dayOfWeek = DayOfWeek.MONDAY, zoneId = "Asia/Tokyo")
-@DisplayName("月曜のみ起動される")
-@Tag("filter")
-public class RunOnMonday {
+public class DayOfWeekContainerFilter
+        extends AbstractDayOfWeekFilter
+        implements ContainerExecutionCondition {
 
-    @Test
-    void test() {
-        log.info("RunOnMonday");
+    @Override
+    public ConditionEvaluationResult evaluate(ContainerExtensionContext context) {
+        return evalDayOfWeek(context);
     }
 }
