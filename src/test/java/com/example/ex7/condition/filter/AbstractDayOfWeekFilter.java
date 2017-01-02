@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.ex7;
+package com.example.ex7.condition.filter;
 
-import com.example.ex7.filter.RunOn;
 import com.example.util.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -34,13 +33,13 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.joining;
 
-public abstract class AbstractDayOfWeekFilter {
+abstract class AbstractDayOfWeekFilter {
 
     private static final Function<DayOfWeek, String> displayDayOfWeek = d -> d.getDisplayName(TextStyle.SHORT, Locale.getDefault());
 
     @NotNull
     @Contract("null -> fail")
-    protected final ConditionEvaluationResult evalDayOfWeek(
+    static ConditionEvaluationResult evalDayOfWeek(
             @NotNull ExtensionContext context
     ) {
         Objects.requireNonNull(context);
