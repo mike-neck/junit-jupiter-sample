@@ -58,13 +58,13 @@ public class NestedClasses {
     }
 
     @Test
-    void aTest() throws InterruptedException {
+    void aTest(@SuppressWarnings("unused") int param) throws InterruptedException {
         log.info("aTest[{}]", TestLifecycleCallbacks.getHash(this));
         Thread.sleep(20);
     }
 
     @Test
-    void anotherTest() throws InterruptedException {
+    void anotherTest(@SuppressWarnings("unused") int param) throws InterruptedException {
         log.info("anotherTest[{}]", TestLifecycleCallbacks.getHash(this));
         Thread.sleep(20);
     }
@@ -78,7 +78,7 @@ public class NestedClasses {
         }
 
         @Test
-        void innerTest() throws InterruptedException {
+        void innerTest(@SuppressWarnings("unused") int param) throws InterruptedException {
             INNER.info("innerTest[{}]", TestLifecycleCallbacks.getHash(this));
             Thread.sleep(20);
         }
@@ -98,7 +98,7 @@ public class NestedClasses {
             }
 
             @Test
-            void mostInnerTest() throws InterruptedException {
+            void mostInnerTest(@SuppressWarnings("unused") int param) throws InterruptedException {
                 MOST.info("mostInnerTest[{}]", TestLifecycleCallbacks.getHash(this));
                 Thread.sleep(20);
             }

@@ -16,6 +16,7 @@
 package com.example.ex7.lifecycle;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -23,10 +24,18 @@ import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
+import org.junit.jupiter.api.extension.ConditionEvaluationResult;
+import org.junit.jupiter.api.extension.ContainerExecutionCondition;
 import org.junit.jupiter.api.extension.ContainerExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
+import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.jupiter.api.extension.TestExecutionCondition;
 import org.junit.jupiter.api.extension.TestExtensionContext;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
+
+import java.util.Objects;
 
 @Slf4j
 public class TestLifecycleCallbacks implements
@@ -37,6 +46,9 @@ public class TestLifecycleCallbacks implements
         , AfterEachCallback
         , AfterAllCallback
         , TestInstancePostProcessor
+        , ContainerExecutionCondition
+        , TestExecutionCondition
+        , ParameterResolver
 {
 
     @NotNull
@@ -91,5 +103,43 @@ public class TestLifecycleCallbacks implements
     public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
         log.info("=== postProcessTestInstance[{}] ===", getHash(testInstance));
         Thread.sleep(5);
+    }
+
+    @Override
+    public ConditionEvaluationResult evaluate(ContainerExtensionContext context) {
+        log.info("=== evaluate container condition ===");
+        return ConditionEvaluationResult.enabled("No problem.");
+    }
+
+    @Override
+    public ConditionEvaluationResult evaluate(TestExtensionContext context) {
+        log.info("=== evaluate test condition [{}] ===", getHash(context.getTestInstance()));
+        return ConditionEvaluationResult.enabled("No problem");
+    }
+
+    @Override
+    public boolean supports(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+        final String hash = getHashOfInstanceFromParameterContext(parameterContext);
+        log.info("=== supports[{}] ===", hash);
+        final Class<?> type = parameterContext.getParameter().getType();
+        return int.class.equals(type) | Integer.class.equals(type) | Integer.TYPE.equals(type);
+    }
+
+    @Override
+    public Object resolve(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+        final String hash = getHashOfInstanceFromParameterContext(parameterContext);
+        log.info("=== resolve[{}] ===", hash);
+        return 0;
+    }
+
+    @NotNull
+    @Contract("null->fail")
+    private static String getHashOfInstanceFromParameterContext(
+            @NotNull ParameterContext parameterContext
+    ) {
+        final ParameterContext ctx = Objects.requireNonNull(parameterContext);
+        return ctx.getTarget()
+                .map(TestLifecycleCallbacks::getHash)
+                .orElse("<empty>");
     }
 }
