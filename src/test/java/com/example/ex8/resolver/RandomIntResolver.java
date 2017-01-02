@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.ex8;
+package com.example.ex8.resolver;
 
+import com.example.ex8.annotation.IntValue;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
+import java.math.BigInteger;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.IntSupplier;
@@ -28,7 +30,7 @@ import java.util.function.ToIntFunction;
 
 public class RandomIntResolver implements ParameterResolver {
 
-    private final Random random = new Random(System.currentTimeMillis());
+    private static final Random random = new Random(System.currentTimeMillis());
 
     @Override
     public boolean supports(ParameterContext pcx, ExtensionContext ext) throws ParameterResolutionException {
@@ -41,7 +43,14 @@ public class RandomIntResolver implements ParameterResolver {
         final Optional<IntValue> opv = Optional.ofNullable(pcx.getParameter().getAnnotation(IntValue.class));
         return build(opv, random::nextInt)
                 .select(iv -> iv.select().length > 0).map(iv -> iv.select()[random.nextInt(iv.select().length)])
-                .orElse(iv -> iv.min() + random.nextInt(iv.max() - iv.min() + 1));
+                .orElse(iv -> iv.min() + generateInt(iv.max(), iv.min()));
+    }
+
+    private static int generateInt(int max, int min) {
+        final BigInteger x = BigInteger.valueOf((long)max);
+        final BigInteger n = BigInteger.valueOf((long) min);
+        final int b = x.min(n).add(BigInteger.ONE).bitLength();
+        return new BigInteger(b, random).intValue();
     }
 
     static IntBuilder build(

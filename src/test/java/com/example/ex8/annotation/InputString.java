@@ -13,8 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.ex8;
+package com.example.ex8.annotation;
 
-public enum InputStringType {
-    RANDOM, STATIC
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.PARAMETER})
+public @interface InputString {
+
+    InputStringType value();
+
+    String staticValue() default "";
 }

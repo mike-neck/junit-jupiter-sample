@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.ex8;
+package com.example.ex8.resolver;
 
+import com.example.ex8.annotation.InputString;
+import com.example.ex8.annotation.InputStringType;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
