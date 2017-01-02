@@ -64,6 +64,16 @@ public final class Pair<L, R> {
         return new Pair<>(left, mapper.apply(left, right));
     }
 
+    @NotNull
+    @Contract("null -> fail")
+    public <S> Pair<Pair<L, R>, S> contextBimap(
+            @NotNull BiFunction<? super L, ? super R, ? extends S> mapper
+    ) {
+        Objects.requireNonNull(mapper);
+
+        return new Pair<>(this, mapper.apply(left, right));
+    }
+
     public L consume(
             @NotNull BiConsumer<? super L, ? super R> action
     ) {
@@ -106,6 +116,16 @@ public final class Pair<L, R> {
     ) {
         Objects.requireNonNull(mapepr);
         return p -> p.bimap(mapepr);
+    }
+
+    @NotNull
+    @Contract("null -> fail")
+    public static <L, R, S> Function<Pair<L, R>, Pair<Pair<L, R>, S>> contextBimapPair(
+            @NotNull BiFunction<? super L, ? super R, ? extends S> mapper
+    ) {
+        Objects.requireNonNull(mapper);
+
+        return p -> p.contextBimap(mapper);
     }
 
     @NotNull
