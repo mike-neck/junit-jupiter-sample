@@ -19,7 +19,7 @@ import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.TestExecutionCondition;
 import org.junit.jupiter.api.extension.TestExtensionContext;
 
-import static com.example.ex7.condition.filter.AbstractDayOfWeekFilter.evalDayOfWeek;
+import static com.example.ex7.condition.filter.DayOfWeekFilter.evalDayOfWeek;
 
 public class DayOfWeekTestFilter
         implements TestExecutionCondition {

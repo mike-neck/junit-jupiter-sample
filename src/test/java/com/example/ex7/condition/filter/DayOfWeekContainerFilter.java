@@ -20,7 +20,7 @@ import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ContainerExecutionCondition;
 import org.junit.jupiter.api.extension.ContainerExtensionContext;
 
-import static com.example.ex7.condition.filter.AbstractDayOfWeekFilter.evalDayOfWeek;
+import static com.example.ex7.condition.filter.DayOfWeekFilter.evalDayOfWeek;
 
 @Slf4j
 public class DayOfWeekContainerFilter

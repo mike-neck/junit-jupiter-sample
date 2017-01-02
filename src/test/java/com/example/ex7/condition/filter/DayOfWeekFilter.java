@@ -33,7 +33,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.joining;
 
-final class AbstractDayOfWeekFilter {
+final class DayOfWeekFilter {
 
     private static final Function<DayOfWeek, String> displayDayOfWeek = d -> d.getDisplayName(TextStyle.SHORT, Locale.getDefault());
 
