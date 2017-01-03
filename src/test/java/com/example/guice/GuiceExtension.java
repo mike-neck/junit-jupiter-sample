@@ -62,7 +62,8 @@ public abstract class GuiceExtension implements
     abstract protected Module prepareModule(
             @NotNull Class<?> testClass
             , @NotNull Set<String> tags
-            , @SuppressWarnings("OptionalUsedAsFieldOrParameterType") @NotNull Optional<AnnotatedElement> annotations
+            , @SuppressWarnings("OptionalUsedAsFieldOrParameterType") @NotNull
+                    Optional<AnnotatedElement> annotations
     );
 
     @Override
@@ -76,10 +77,14 @@ public abstract class GuiceExtension implements
     }
 
     @Override
-    public boolean supports(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public boolean supports(
+            ParameterContext parameterContext
+            , ExtensionContext extensionContext
+    ) throws ParameterResolutionException {
         final Parameter parameter = parameterContext.getParameter();
         final Class<?> paramType = parameter.getType();
-        final Stream<? extends Key<?>> keyStream = Arrays.stream(parameter.getAnnotations())
+        final Stream<? extends Key<?>> keyStream = Arrays
+                .stream(parameter.getAnnotations())
                 .map(a -> Key.get(paramType, a));
         return extensionContext.getTestClass()
                 .map(c -> getStore(extensionContext).get(c, Injector.class))
@@ -94,7 +99,10 @@ public abstract class GuiceExtension implements
     }
 
     @Override
-    public Object resolve(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public Object resolve(
+            ParameterContext parameterContext
+            , ExtensionContext extensionContext
+    ) throws ParameterResolutionException {
         final Parameter parameter = parameterContext.getParameter();
         final Class<?> paramType = parameter.getType();
         final Annotation[] annotations = parameter.getAnnotations();
@@ -111,9 +119,11 @@ public abstract class GuiceExtension implements
                 .map(Pair.mapPair(o -> o.map(p -> (Object) p.get())))
                 .map(Pair.mapPair(o -> o.map(Optional::of)))
                 // (a, Maybe (Maybe t)) -> (a -> Maybe t -> Maybe t) -> Maybe t
-                .flatMap(Pair.transformPair((m, o) -> o.orElseGet(findBindingByClassAndAnnotation(paramType, annotations, m))))
+                .flatMap(Pair.transformPair((m, o) -> o.orElseGet(
+                        findBindingByClassAndAnnotation(paramType, annotations, m))))
                 .orElseThrow(() -> new ParameterResolutionException(
-                        String.format("System cannot find binding for type: [%s] parameter index: %d"
+                        String.format(
+                                "System cannot find binding for type: [%s] parameter index: %d"
                                 , parameter.getType()
                                 , parameterContext.getIndex())
                 ));
