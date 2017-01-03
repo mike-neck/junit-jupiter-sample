@@ -84,7 +84,9 @@ public abstract class GuiceExtension implements
         return extensionContext.getTestClass()
                 .map(c -> getStore(extensionContext).get(c, Injector.class))
                 .map(Injector::getAllBindings)
+                // a -> (a,a)
                 .map(Pair.createPair(Function.identity()))
+                // (a -> Bool) -> (b -> Bool) -> (a,b) -> Bool
                 .filter(Pair.orFilterPair(
                         b -> b.containsKey(Key.get(paramType))
                         , b -> keyStream.anyMatch(b::containsKey)
@@ -99,11 +101,16 @@ public abstract class GuiceExtension implements
         return extensionContext.getTestClass()
                 .map(c -> getStore(extensionContext).get(c, Injector.class))
                 .map(Injector::getAllBindings)
+                // a -> (a, b)
                 .map(Pair.createPair(b -> b.get(Key.get(paramType))))
+                // (a, b) -> (b -> Maybe b) -> (a, Maybe b)
                 .map(Pair.mapPair(Optional::ofNullable))
+                // (a, Maybe b) -> (b -> c) -> (a, Maybe c)
                 .map(Pair.mapPair(o -> o.map(Binding::getProvider)))
+                // (a, Maybe c) -> (c -> Maybe t) -> (a, Maybe (Maybe t))
                 .map(Pair.mapPair(o -> o.map(p -> (Object) p.get())))
                 .map(Pair.mapPair(o -> o.map(Optional::of)))
+                // (a, Maybe (Maybe t)) -> (a -> Maybe t -> Maybe t) -> Maybe t
                 .flatMap(Pair.transformPair((m, o) -> o.orElseGet(findBindingByClassAndAnnotation(paramType, annotations, m))))
                 .orElseThrow(() -> new ParameterResolutionException(
                         String.format("System cannot find binding for type: [%s] parameter index: %d"
