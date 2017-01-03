@@ -23,7 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Data
 @RequiredArgsConstructor
@@ -74,12 +76,76 @@ public final class Pair<L, R> {
         return new Pair<>(this, mapper.apply(left, right));
     }
 
-    public L consume(
+    @NotNull
+    @Contract("null->fail")
+    public L accept(
             @NotNull BiConsumer<? super L, ? super R> action
     ) {
         Objects.requireNonNull(action);
         action.accept(left, right);
         return left;
+    }
+
+    @Contract("null->fail")
+    public void consume(
+            @NotNull BiConsumer<? super L, ? super R> action
+    ) {
+        Objects.requireNonNull(action);
+        action.accept(left, right);
+    }
+
+    @NotNull
+    @Contract("null->fail")
+    public static <T> Predicate<Pair<T, T>> bothFilterPair(
+            @NotNull Predicate<? super T> predicate
+    ) {
+        Objects.requireNonNull(predicate);
+        return p -> predicate.test(p.left) && predicate.test(p.right);
+    }
+
+    @NotNull
+    @Contract(pure = true)
+    public static Predicate<Pair<Boolean, Boolean>> bothFilterPair() {
+        return p -> p.left && p.right;
+    }
+
+    @NotNull
+    @Contract("null,_->fail;_,null->fail")
+    public static <L, R> Predicate<Pair<L, R>> bothFilterPair(
+            @NotNull Predicate<L> forLeft
+            , @NotNull Predicate<R> forRight
+    ) {
+        Objects.requireNonNull(forLeft);
+        Objects.requireNonNull(forRight);
+
+        return p -> forLeft.test(p.left) && forRight.test(p.right);
+    }
+
+    @NotNull
+    @Contract("null->fail")
+    public static <T> Predicate<Pair<T, T>> orFilterPair(
+            @NotNull Predicate<? super T> predicate
+    ) {
+        Objects.requireNonNull(predicate);
+        return p -> predicate.test(p.left) || predicate.test(p.right);
+    }
+
+    @NotNull
+    @Contract(pure = true)
+    public static Predicate<Pair<Boolean, Boolean>> orFilterPair() {
+        return p -> p.left || p.right;
+    }
+
+    @NotNull
+    @Contract("null,_->fail;_,null->fail")
+    public static <L, R> Predicate<Pair<L, R>> orFilterPair(
+            @NotNull Predicate<L> forLeft
+            , @NotNull Predicate<R> forRight
+    ) {
+        Objects.requireNonNull(forLeft);
+        Objects.requireNonNull(forRight);
+
+        return p -> forLeft.test(p.left) || forRight.test(p.right);
     }
 
     @NotNull
@@ -130,8 +196,17 @@ public final class Pair<L, R> {
 
     @NotNull
     @Contract("null -> fail")
-    public static <L, R> Function<Pair<L, R>, L> consumePair(
+    public static <L, R> Function<Pair<L, R>, L> acceptPair(
             @NotNull BiConsumer<L, R> action
+    ) {
+        Objects.requireNonNull(action);
+        return p -> p.accept(action);
+    }
+
+    @NotNull
+    @Contract("null->fail")
+    public static <L, R> Consumer<Pair<L, R>> consumePair(
+            @NotNull BiConsumer<? super L, ? super R> action
     ) {
         Objects.requireNonNull(action);
         return p -> p.consume(action);

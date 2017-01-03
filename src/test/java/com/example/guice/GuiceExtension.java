@@ -15,11 +15,13 @@
  */
 package com.example.guice;
 
+import com.example.util.Pair;
 import com.google.inject.Binding;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.Provider;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +43,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @Slf4j
 public abstract class GuiceExtension implements
@@ -66,35 +70,41 @@ public abstract class GuiceExtension implements
         final Store store = getStore(context);
         final Optional<AnnotatedElement> annotations = context.getElement();
         context.getTestClass()
-                .map(c -> prepareModule(c, context.getTags(), annotations))
-                .map(Guice::createInjector)
-                .ifPresent(i -> store.put(Injector.class, i));
+                .map(Pair.createPair(c -> prepareModule(c, context.getTags(), annotations)))
+                .map(Pair.mapPair(Guice::createInjector))
+                .ifPresent(p -> store.put(p.getLeft(), p.getRight()));
     }
 
     @Override
     public boolean supports(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        final Class<?> paramType = parameterContext.getParameter().getType();
-        final Map<Key<?>, Binding<?>> bindings = getStore(extensionContext)
-                .get(Injector.class, Injector.class)
-                .getAllBindings();
-        final Annotation[] annotations = parameterContext.getParameter().getAnnotations();
-        return bindings.containsKey(Key.get(paramType)) ||
-                Arrays.stream(annotations).map(a -> Key.get(paramType, a)).anyMatch(bindings::containsKey);
+        final Parameter parameter = parameterContext.getParameter();
+        final Class<?> paramType = parameter.getType();
+        final Stream<? extends Key<?>> keyStream = Arrays.stream(parameter.getAnnotations())
+                .map(a -> Key.get(paramType, a));
+        return extensionContext.getTestClass()
+                .map(c -> getStore(extensionContext).get(c, Injector.class))
+                .map(Injector::getAllBindings)
+                .map(Pair.createPair(Function.identity()))
+                .filter(Pair.orFilterPair(
+                        b -> b.containsKey(Key.get(paramType))
+                        , b -> keyStream.anyMatch(b::containsKey)
+                )).isPresent();
     }
 
     @Override
     public Object resolve(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         final Parameter parameter = parameterContext.getParameter();
         final Class<?> paramType = parameter.getType();
-        final Map<Key<?>, Binding<?>> bindings = getStore(extensionContext)
-                .get(Injector.class, Injector.class)
-                .getBindings();
         final Annotation[] annotations = parameter.getAnnotations();
-        return Optional.ofNullable(bindings.get(Key.get(paramType)))
-                .map(Binding::getProvider)
-                .map(p -> (Object) p.get())
-                .map(Optional::of)
-                .orElseGet(findBindingByClassAndAnnotation(paramType, annotations, bindings))
+        return extensionContext.getTestClass()
+                .map(c -> getStore(extensionContext).get(c, Injector.class))
+                .map(Injector::getAllBindings)
+                .map(Pair.createPair(b -> b.get(Key.get(paramType))))
+                .map(Pair.mapPair(Optional::ofNullable))
+                .map(Pair.mapPair(o -> o.map(Binding::getProvider)))
+                .map(Pair.mapPair(o -> o.map(p -> (Object) p.get())))
+                .map(Pair.mapPair(o -> o.map(Optional::of)))
+                .flatMap(Pair.transformPair((m, o) -> o.orElseGet(findBindingByClassAndAnnotation(paramType, annotations, m))))
                 .orElseThrow(() -> new ParameterResolutionException(
                         String.format("System cannot find binding for type: [%s] parameter index: %d"
                                 , parameter.getType()
@@ -115,11 +125,12 @@ public abstract class GuiceExtension implements
 
         return () -> Arrays.stream(annotations)
                 .map(a -> Key.get(paramType, a))
-                .filter(bindings::containsKey)
-                .map(bindings::get)
+                .map(k -> Optional.ofNullable(bindings.get(k)))
+                .filter(Optional::isPresent)
+                .findFirst()
+                .flatMap(Function.identity())
                 .map(Binding::getProvider)
-                .map(p -> (Object)p.get())
-                .findAny();
+                .map(Provider::get);
     }
 
     @Override
